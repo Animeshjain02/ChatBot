@@ -1,17 +1,14 @@
 import { Link } from "react-router-dom";
-
 import styles from "./Logo.module.css";
-import logo from "/logos/home-bot-icon.png";
+import { IoPulseOutline } from "react-icons/io5";
 
 const Logo = () => {
 	return (
 		<div className={styles.parent}>
-				<Link to={"/"}>
-					<img src={logo} alt='logo' className={styles.logo} />
-				</Link>
-				<p className={styles.logo_p}>
-					<span className={styles.span}>MERN-GPT</span>
-				</p>
+			<Link to={"/"} style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+				<IoPulseOutline size={32} color="var(--primary-color)" />
+				<span className={styles.title}>MedChat</span>
+			</Link>
 		</div>
 	);
 };

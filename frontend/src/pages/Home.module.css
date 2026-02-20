@@ -1,45 +1,181 @@
+/* Professional Home Page Styles */
+
 .parent {
-	scroll-snap-type: y mandatory;
-	overflow-y: scroll;
-	height: 100vh;
 	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	position: relative;
+	overflow: hidden;
+	padding: 2rem;
+	box-sizing: border-box;
 }
 
-.parent h1 {
-	font-weight: 1000;
-	font-size: 3rem;
+/* Background Effects (Aurora / Glow) */
+.parent::before {
+	content: '';
+	position: absolute;
+	top: -20%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 800px;
+	height: 600px;
+	background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+	z-index: 0;
+	pointer-events: none;
+	filter: blur(40px);
+	/* Reduced blur for performance */
+	will-change: transform;
+	opacity: 0.6;
 }
 
-.parent h2 {
-	color: #00ced1;
+.container {
+	z-index: 1;
+	max-width: 1000px;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2rem;
 }
 
-.parent p {
-	font-weight: 300;
-	font-size: 1.3rem;
-	word-spacing: 0.4rem;
-	line-height: 2;
+.heroTag {
+	font-size: 0.9rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	color: var(--primary-color);
+	text-transform: uppercase;
+	margin-bottom: -1rem;
+	background: rgba(37, 99, 235, 0.1);
+	padding: 6px 16px;
+	border-radius: 99px;
+	border: 1px solid rgba(37, 99, 235, 0.2);
 }
 
-.highlight {
-	color: #00ced1 !important;
+.title {
+	font-size: 4rem;
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+	background: linear-gradient(135deg, var(--text-color) 0%, var(--text-secondary) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 	margin: 0;
 }
 
-.btn {
-	background-color: #00ced1;
-    padding: 1rem 2rem;
-    color:black;
-    border-radius: 10px;
-    margin-top:2rem;
-    font-size:1.2rem;
-    font-weight:400
+/* Dark mode specific gradient enhancement */
+[data-theme='dark'] .title {
+	background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
-.ui1 {
-	max-width: 100%;
+.subtitle {
+	font-size: 1.25rem;
+	color: var(--text-secondary);
+	max-width: 600px;
+	line-height: 1.6;
+	margin: 0;
 }
 
-.ui2 {
-	width: 80%;
+.ctaContainer {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.primaryBtn {
+	background-color: var(--primary-color);
+	color: white;
+	padding: 12px 32px;
+	border-radius: 12px;
+	font-size: 1rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+	border: 1px solid transparent;
+}
+
+.primaryBtn:hover {
+	background-color: var(--primary-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+	text-decoration: none;
+}
+
+.secondaryBtn {
+	background-color: transparent;
+	color: var(--text-color);
+	padding: 12px 32px;
+	border-radius: 12px;
+	font-size: 1rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	border: 1px solid var(--border-color);
+}
+
+.secondaryBtn:hover {
+	background-color: var(--secondary-color);
+	border-color: var(--primary-color);
+	text-decoration: none;
+	color: var(--primary-color);
+}
+
+.featuresGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 2rem;
+	margin-top: 4rem;
+	width: 100%;
+}
+
+.featureCard {
+	background: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 16px;
+	padding: 1.5rem;
+	text-align: left;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.featureCard:hover {
+	transform: translateY(-5px);
+	box-shadow: var(--shadow-lg);
+	border-color: var(--primary-color);
+}
+
+.featureIcon {
+	font-size: 2rem;
+	color: var(--primary-color);
+	margin-bottom: 1rem;
+}
+
+.featureTitle {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--text-color);
+	margin-bottom: 0.5rem;
+}
+
+.featureDesc {
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+	line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+	.title {
+		font-size: 2.5rem;
+	}
+
+	.featuresGrid {
+		grid-template-columns: 1fr;
+	}
 }

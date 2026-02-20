@@ -10,11 +10,7 @@ import styles from "./AuthForm.module.css";
 import Button from "../components/shared/Button";
 
 import { useAuth } from "../context/context";
-
-import axios from "axios";
 import toast from "react-hot-toast";
-axios.defaults.baseURL = "http://localhost:5001/api";
-axios.defaults.withCredentials = true; // Enable sending credentials (e.g., cookies) in cross-origin requests
 
 const Signup = () => {
 	const [buttonName, setButtonName] = useState("SignUp");
@@ -28,7 +24,7 @@ const Signup = () => {
 
 		const formData = new FormData(event.currentTarget);
 		const username = formData.get("username") as string;
-        const email = formData.get("email") as string;
+		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 		// const confirmPassword = formData.get("confirm-password") as string;
 
@@ -39,7 +35,7 @@ const Signup = () => {
 			setButtonName("SignUp");
 			toast.success("Account created and Logged In", { id: "signup" });
 			navigate('/login');
-        } catch (error: any) {
+		} catch (error: any) {
 			setButtonName("SignUp");
 			toast.error(error.message, { id: "signup" });
 			console.log(error, "error");
@@ -68,7 +64,7 @@ const Signup = () => {
 						maxLength={25}
 						minLength={2}
 						label='Your Name'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='John Doe'
 					/>
 
@@ -79,10 +75,10 @@ const Signup = () => {
 						name='email'
 						type='text'
 						required={true}
-						maxLength={20}
+						maxLength={30}
 						minLength={5}
 						label='E-Mail'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='name@example.com'
 					/>
 
@@ -96,7 +92,7 @@ const Signup = () => {
 						maxLength={16}
 						minLength={8}
 						label='Password'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='Password'
 					/>
 
@@ -110,7 +106,7 @@ const Signup = () => {
 						maxLength={16}
 						minLength={8}
 						label='Confirm Password'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='Confirm Password'
 					/>
 

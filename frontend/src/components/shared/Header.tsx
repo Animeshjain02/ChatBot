@@ -1,36 +1,26 @@
 import Logo from "./Logo";
-
 import styles from "./Header.module.css";
 import { useAuth } from "../../context/context";
-import NavigationLink from "./NavigationLink";
+import ProfileMenu from "./ProfileMenu";
 
 const Header = () => {
 	const auth = useAuth();
-
-	let links;
-
-	if (auth?.isLoggedIn) {
-		links = (
-			<>
-				<NavigationLink to='/chat' text='Go To Chat' />
-				<NavigationLink to='/' text='Logout' onClick={auth.logout} />
-			</>
-		);
-	} else {
-		links = (
-			<>
-				<NavigationLink to='/login' text='Sign In'></NavigationLink>
-				<NavigationLink to='/signup' text='Create an Account'></NavigationLink>
-			</>
-		);
-	}
 
 	return (
 		<div className={styles.parent}>
 			<div>
 				<Logo />
 			</div>
-			<div>{links}</div>
+
+			<div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+				{auth?.isLoggedIn ? (
+					<ProfileMenu />
+				) : (
+					<>
+						{/* Buttons removed as per user request */}
+					</>
+				)}
+			</div>
 		</div>
 	);
 };

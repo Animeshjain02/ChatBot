@@ -27,7 +27,7 @@ export const userSignup = async (
 		const data = await response.data;
 		return data;
 	} catch (err: any) {
-        console.log(err)
+		console.log(err)
 		throw new Error(`Error! Cannot Signup. ${err.message}`);
 	}
 };
@@ -45,11 +45,9 @@ export const getAuthStatus = async () => {
 	}
 };
 
-export const postChatRequest = async (message: string) => {
-	console.log("hello", message);
+export const postChatRequest = async (message: string, lang: string = "en", conversationId?: string) => {
 	try {
-		const response = await axios.post("/chat/new", { message });
-		console.log(response);
+		const response = await axios.post("/chat/new", { message, lang, conversationId });
 		if (response.status !== 200) {
 			throw new Error();
 		}
@@ -61,7 +59,7 @@ export const postChatRequest = async (message: string) => {
 	}
 };
 
-export const getAllChats = async () => {
+export const getUserConversations = async () => {
 	try {
 		const response = await axios.get("/chat/all-chats");
 		if (response.status !== 200) {
@@ -75,7 +73,35 @@ export const getAllChats = async () => {
 	}
 };
 
-export const deleteAllChats = async () => {
+export const getConversationChats = async (conversationId: string) => {
+	try {
+		const response = await axios.get(`/chat/${conversationId}`);
+		if (response.status !== 200) {
+			throw new Error();
+		}
+		const data = await response.data;
+		return data;
+	} catch (err: any) {
+		console.log(err);
+		throw new Error(err.message);
+	}
+};
+
+export const deleteConversation = async (conversationId: string) => {
+	try {
+		const response = await axios.delete(`/chat/${conversationId}`);
+		if (response.status !== 200) {
+			throw new Error();
+		}
+		const data = await response.data;
+		return data;
+	} catch (err: any) {
+		console.log(err);
+		throw new Error(err.message);
+	}
+};
+
+export const deleteAllConversations = async () => {
 	try {
 		const response = await axios.delete("/chat/delete-all-chats");
 		if (response.status !== 200) {

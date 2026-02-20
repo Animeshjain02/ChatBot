@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -11,17 +11,13 @@ import Button from "../components/shared/Button";
 
 import styles from "./AuthForm.module.css";
 
-import axios from "axios";
-axios.defaults.baseURL = "http://localhost:5001/api";
-axios.defaults.withCredentials = true; // Enable sending credentials (e.g., cookies) in cross-origin requests
-
 import { useAuth } from "../context/context";
 
 const Login = () => {
 
-    const [buttonName, setButtonName] = useState('Login')
+	const [buttonName, setButtonName] = useState('Login')
 
-    const navigate = useNavigate()
+	const navigate = useNavigate()
 
 	const auth = useAuth();
 
@@ -33,15 +29,15 @@ const Login = () => {
 		const password = formData.get("password") as string;
 
 		try {
-            setButtonName('Loading ...')
+			setButtonName('Loading ...')
 			toast.loading("Signing in ..", { id: "login" });
 			await auth?.login(email, password);
-            setButtonName('Login')
-            toast.success("Signed in successfully", { id: "login" })
-            navigate('/chat')
+			setButtonName('Login')
+			toast.success("Signed in successfully", { id: "login" })
+			navigate('/chat')
 		} catch (error: any) {
-            setButtonName('Login')
-            toast.error(error.message, { id: "login" })
+			setButtonName('Login')
+			toast.error(error.message, { id: "login" })
 			console.log(error, 'error');
 		}
 	};
@@ -65,10 +61,10 @@ const Login = () => {
 						name='email'
 						type='text'
 						required={true}
-						maxLength={20}
+						maxLength={30}
 						minLength={5}
 						label='E-Mail'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='name@example.com'
 					/>
 
@@ -82,7 +78,7 @@ const Login = () => {
 						maxLength={16}
 						minLength={8}
 						label='Password'
-						onChange={() => {}}
+						onChange={() => { }}
 						inputPH='Password'
 					/>
 
