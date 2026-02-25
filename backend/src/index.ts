@@ -58,7 +58,26 @@ import chatRoutes from "./routes/chat-routes.js";
 const app = express();
 
 // Middlewares
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const frontendUrl = process.env.FRONTEND_URL;
+      // Allow the specific FRONTEND_URL, localhost, or any vercel subdomain for flexibility
+      if (
+        !origin ||
+        origin === frontendUrl ||
+        origin === "http://localhost:5173" ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        console.log("Blocking blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(morgan("dev")); // for development
