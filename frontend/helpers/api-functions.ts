@@ -9,7 +9,8 @@ export const userLogin = async (email: string, password: string) => {
 		const data = await response.data;
 		return data;
 	} catch (err: any) {
-		throw new Error(`Error! Cannot Login. ${err.message}`);
+		const errorMessage = err.response?.data?.cause || err.message || "Cannot Login";
+		throw new Error(errorMessage);
 	}
 };
 
@@ -27,8 +28,8 @@ export const userSignup = async (
 		const data = await response.data;
 		return data;
 	} catch (err: any) {
-		console.log(err)
-		throw new Error(`Error! Cannot Signup. ${err.message}`);
+		const errorMessage = err.response?.data?.cause || err.message || "Cannot Signup";
+		throw new Error(errorMessage);
 	}
 };
 
