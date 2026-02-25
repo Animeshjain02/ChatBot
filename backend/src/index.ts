@@ -68,8 +68,14 @@ app.use("/api/user/", userRoutes);
 app.use("/api/chat/", chatRoutes);
 
 // MongoDB connection
+const mongoUrl = process.env.MONGO_URL;
+if (!mongoUrl) {
+  console.error("CRITICAL ERROR: MONGO_URL is not defined in environment variables! ❌");
+  process.exit(1);
+}
+
 mongoose
-  .connect(process.env.MONGO_URL!)
+  .connect(mongoUrl)
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
       console.log(
