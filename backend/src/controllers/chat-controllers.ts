@@ -50,11 +50,14 @@ export const generateChatCompletion = async (
       console.log("[Node] Received response from Python:", response.data);
       botReply = response.data.answer;
     } catch (pythonError: any) {
-      console.error("[Node] Error communicating with Python service:", pythonError.message);
+      const status = pythonError.response?.status;
+      const errorData = pythonError.response?.data;
+      console.error(`[Node] Python Error - Status: ${status}`, errorData || pythonError.message);
+
       if (pythonError.code === 'ECONNREFUSED') {
         botReply = "System Error: The medical knowledge base is currently offline. Please ensure the Python backend is running.";
       } else {
-        botReply = "I'm sorry, I encountered an error processing your request.";
+        botReply = `Medical Brain Error (${status || 'Unknown'}): The knowledge base failed to process this request. This usually happens if the server runs out of memory or a model failed to load.`;
       }
     }
 
