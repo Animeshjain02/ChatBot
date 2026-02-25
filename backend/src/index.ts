@@ -44,54 +44,20 @@
 import { config } from "dotenv";
 config();
 
-import express from "express";
-import mongoose from "mongoose";
-import morgan from "morgan";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import userRoutes from "./routes/user-routes.js";
-import chatRoutes from "./routes/chat-routes.js";
-// import { config } from "dotenv";
-
-// config();
-
-const app = express();
-
-// Middlewares
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const frontendUrl = process.env.FRONTEND_URL;
-      // Allow the specific FRONTEND_URL, localhost, or any vercel subdomain for flexibility
-      if (
-        !origin ||
-        origin === frontendUrl ||
-        origin === "http://localhost:5173" ||
-        origin.endsWith(".vercel.app")
-      ) {
-        callback(null, true);
-      } else {
-        console.log("Blocking blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(morgan("dev")); // for development
-
-// Routes
-app.use("/api/user/", userRoutes);
-app.use("/api/chat/", chatRoutes);
-
-// MongoDB connection
+// Environment Variable Validation
 const mongoUrl = process.env.MONGO_URL;
-if (!mongoUrl) {
-  console.error("CRITICAL ERROR: MONGO_URL is not defined in environment variables! ❌");
+const cookieSecret = process.env.COOKIE_SECRET;
+const jwtSecret = process.env.JWT_SECRET;
+
+if (!mongoUrl || !cookieSecret || !jwtSecret) {
+  console.error("CRITICAL ERROR: Missing required environment variables! ❌");
+  if (!mongoUrl) console.error("- MONGO_URL is missing");
+  if (!cookieSecret) console.error("- COOKIE_SECRET is missing");
+  if (!jwtSecret) console.error("- JWT_SECRET is missing");
   process.exit(1);
 }
+
+import express from "express";
 
 mongoose
   .connect(mongoUrl)
