@@ -42,10 +42,11 @@ export const userSignUp = async (
 		// create token and store cookie
 
 		res.clearCookie(COOKIE_NAME, {
-			path: "/", //cookie directory in browser
-			domain: process.env.DOMAIN, // our website domain
+			path: "/",
 			httpOnly: true,
 			signed: true,
+			sameSite: "none",
+			secure: true,
 		});
 
 		// create token
@@ -55,11 +56,12 @@ export const userSignUp = async (
 		expires.setDate(expires.getDate() + 7);
 
 		res.cookie(COOKIE_NAME, token, {
-			path: "/", //cookie directory in browser
-			domain: process.env.DOMAIN, // our website domain
-			expires, // same as token expiration time
+			path: "/",
+			expires,
 			httpOnly: true,
 			signed: true,
+			sameSite: "none",
+			secure: true,
 		});
 
 		return res
@@ -95,10 +97,11 @@ export const userLogin = async (
 
 		// if user will login again we have to -> set new cookies -> erase previous cookies
 		res.clearCookie(COOKIE_NAME, {
-			path: "/", //cookie directory in browser
-			domain: process.env.DOMAIN, // our website domain
+			path: "/",
 			httpOnly: true,
 			signed: true,
+			sameSite: "none",
+			secure: true,
 		});
 
 		// create token
@@ -108,11 +111,12 @@ export const userLogin = async (
 		expires.setDate(expires.getDate() + 7);
 
 		res.cookie(COOKIE_NAME, token, {
-			path: "/", //cookie directory in browser
-			domain: process.env.DOMAIN, // our website domain
-			expires, // same as token expiration time
+			path: "/",
+			expires,
 			httpOnly: true,
 			signed: true,
+			sameSite: "none",
+			secure: true,
 		});
 
 		return res
@@ -176,10 +180,11 @@ export const logoutUser = async (
 		}
 
 		res.clearCookie(COOKIE_NAME, {
-			path: "/", //cookie directory in browser
-			domain: process.env.DOMAIN, // our website domain
+			path: "/",
 			httpOnly: true,
 			signed: true,
+			sameSite: "none",
+			secure: true,
 		});
 
 		return res
