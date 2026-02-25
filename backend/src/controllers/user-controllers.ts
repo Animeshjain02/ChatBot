@@ -41,13 +41,12 @@ export const userSignUp = async (
 
 		// create token and store cookie
 
-		res.clearCookie(COOKIE_NAME),
-		{
+		res.clearCookie(COOKIE_NAME, {
 			path: "/", //cookie directory in browser
 			domain: process.env.DOMAIN, // our website domain
 			httpOnly: true,
 			signed: true,
-		};
+		});
 
 		// create token
 		const token = createToken(user._id.toString(), user.email, "7d");
@@ -95,13 +94,12 @@ export const userLogin = async (
 				.json({ message: "ERROR", cause: "Incorrect Password" });
 
 		// if user will login again we have to -> set new cookies -> erase previous cookies
-		res.clearCookie(COOKIE_NAME),
-		{
+		res.clearCookie(COOKIE_NAME, {
 			path: "/", //cookie directory in browser
 			domain: process.env.DOMAIN, // our website domain
 			httpOnly: true,
 			signed: true,
-		};
+		});
 
 		// create token
 		const token = createToken(user._id.toString(), user.email, "7d");
@@ -177,13 +175,12 @@ export const logoutUser = async (
 				.json({ message: "ERROR", cause: "Permissions didn't match" });
 		}
 
-		res.clearCookie(COOKIE_NAME),
-		{
+		res.clearCookie(COOKIE_NAME, {
 			path: "/", //cookie directory in browser
 			domain: process.env.DOMAIN, // our website domain
 			httpOnly: true,
 			signed: true,
-		};
+		});
 
 		return res
 			.status(200)
