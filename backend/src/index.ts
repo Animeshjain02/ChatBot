@@ -1,46 +1,3 @@
-// import express from "express";
-// import mongoose from "mongoose";
-// import morgan from "morgan";
-// import cors from "cors";
-// import cookieParser from "cookie-parser";
-// import connectDB from "./db.js";
-// import userRoutes from "./routes/user-routes.js";
-// import chatRoutes from "./routes/chat-routes.js";
-
-// import { config } from "dotenv";
-
-// config();
-
-// const app = express();
-
-// // Middlewares
-
-// app.use(cors({origin:"http://localhost:5173", credentials: true}));
-// app.use(express.json());
-// app.use(cookieParser(process.env.COOKIE_SECRET))
-// app.use(morgan("dev")); // for development
-
-// // routes
-// app.use("/api/user/", userRoutes);
-// app.use("/api/chat/", chatRoutes);
-
-// // Connections and Listeners
-// mongoose
-// 	.connect(
-// 		`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@new-cluster.syllbdh.mongodb.net/ai-chat-bot`
-// 	)
-// 	.then(() => {
-// 		app.listen(process.env.PORT || 5000);
-// 		console.log(
-// 			`Server started on port ${
-// 				process.env.PORT || 5000
-// 			} and Mongo DB is connected`
-// 		);
-// 	})
-// 	.catch((err) => {
-// 		console.log(err);
-// 	});
-
 import { config } from "dotenv";
 config();
 
@@ -58,7 +15,44 @@ if (!mongoUrl || !cookieSecret || !jwtSecret) {
 }
 
 import express from "express";
+import mongoose from "mongoose";
+import morgan from "morgan";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import userRoutes from "./routes/user-routes.js";
+import chatRoutes from "./routes/chat-routes.js";
 
+const app = express();
+
+// Middlewares
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const frontendUrl = process.env.FRONTEND_URL;
+      if (
+        !origin ||
+        origin === frontendUrl ||
+        origin === "http://localhost:5173" ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        console.log("Blocking blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(cookieParser(cookieSecret));
+app.use(morgan("dev"));
+
+// Routes
+app.use("/api/user/", userRoutes);
+app.use("/api/chat/", chatRoutes);
+
+// MongoDB connection
 mongoose
   .connect(mongoUrl)
   .then(() => {

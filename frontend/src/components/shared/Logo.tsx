@@ -7,7 +7,7 @@ const Logo = () => {
 		<div className={styles.parent}>
 			<Link to={"/"} style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
 				<IoPulseOutline size={32} color="var(--primary-color)" />
-				<span className={styles.title}>MedChat</span>
+				<span className={styles.title}>EDUMATE</span>
 			</Link>
 		</div>
 	);
