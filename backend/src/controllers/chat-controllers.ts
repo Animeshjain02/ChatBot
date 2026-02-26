@@ -39,7 +39,11 @@ export const generateChatCompletion = async (
     conversation.chats.push({ content: message, role: "user" });
 
     // 🔥 Send request to Python FastAPI backend
-    const pythonUrl = process.env.PYTHON_API_URL || "http://127.0.0.1:5000/ask";
+    // Normalize URL: handle cases where PYTHON_API_URL might be just the base domain
+    const pythonBaseUrl = (process.env.PYTHON_API_URL || "http://127.0.0.1:5000").replace(/\/ask$/i, "");
+    const pythonUrl = `${pythonBaseUrl.replace(/\/$/, "")}/ask`;
+
+    console.log(`[Node] Forwarding request to Python API: "${pythonUrl}"`);
 
     let botReply = "";
     try {
@@ -53,11 +57,12 @@ export const generateChatCompletion = async (
       const status = pythonError.response?.status;
       const errorData = pythonError.response?.data;
       console.error(`[Node] Python Error - Status: ${status}`, errorData || pythonError.message);
+      console.error(`[Node] Attempted URL: ${pythonUrl}`);
 
       if (pythonError.code === 'ECONNREFUSED') {
-        botReply = "System Error: The medical knowledge base is currently offline. Please ensure the Python backend is running.";
+        botReply = "System Error: The medical knowledge base is currently offline. Please ensure the Python backend is running locally or the PYTHON_API_URL is correct.";
       } else {
-        botReply = `Medical Brain Error (${status || 'Unknown'}): The knowledge base failed to process this request. This usually happens if the server runs out of memory or a model failed to load.`;
+        botReply = `Medical Brain Error (${status || 'Unknown'}): The knowledge base failed to process this request. This usually happens if the URL is incorrect (404), there's a model error, or the server is overloaded. Attempted URL: ${pythonUrl}`;
       }
     }
 
