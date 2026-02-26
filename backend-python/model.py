@@ -1,9 +1,3 @@
-from langchain_huggingface import HuggingFacePipeline
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-import torch
 import os
 
 # Global variables for lazy loading
@@ -14,7 +8,10 @@ _vectorstore = None
 def get_llm():
     global _llm
     if _llm is None:
-        print("Loading LLM model...")
+        print("Loading LLM model (flan-t5-small)...")
+        import torch
+        from langchain_huggingface import HuggingFacePipeline
+        
         device = 0 if torch.cuda.is_available() else -1
         _llm = HuggingFacePipeline.from_model_id(
             model_id="google/flan-t5-small",
@@ -27,14 +24,20 @@ def get_llm():
 def get_embedding_model():
     global _embedding_model
     if _embedding_model is None:
-        print("Loading Embedding model...")
-        _embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1")
+        print("Loading Embedding model (MiniLM)...")
+        from langchain_huggingface import HuggingFaceEmbeddings
+        # Switching to a much lighter embedding model
+        _embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     return _embedding_model
 
 def get_vectorstore():
     global _vectorstore
     if _vectorstore is None:
         print("Initializing Knowledge Base...")
+        from langchain_community.vectorstores import FAISS
+        from langchain_community.document_loaders import PyPDFLoader
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        
         pdf_path = "BHMRC Hospital Data.pdf"
         if not os.path.exists(pdf_path):
             print(f"Error: PDF file {pdf_path} not found.")

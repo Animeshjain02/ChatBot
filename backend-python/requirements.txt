@@ -5,10 +5,8 @@ deep-translator
 langchain
 langchain-community
 langchain-huggingface
-torch
+torch --index-url https://download.pytorch.org/whl/cpu
 python-dotenv
 faiss-cpu
 pypdf
 sentence-transformers
-accelerate
-bitsandbytes
