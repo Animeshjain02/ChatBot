@@ -1,9 +1,11 @@
 import os
+import gc
 
 # Global variables for lazy loading
 _llm = None
 _embedding_model = None
 _vectorstore = None
+INDEX_PATH = "faiss_index"
 
 def get_llm():
     global _llm
@@ -19,6 +21,7 @@ def get_llm():
             device=device,
             pipeline_kwargs={"max_new_tokens": 150, "temperature": 0.0}
         )
+        gc.collect() # Free up RAM
     return _llm
 
 def get_embedding_model():
@@ -26,31 +29,43 @@ def get_embedding_model():
     if _embedding_model is None:
         print("Loading Embedding model (MiniLM)...")
         from langchain_huggingface import HuggingFaceEmbeddings
-        # Switching to a much lighter embedding model
         _embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     return _embedding_model
 
 def get_vectorstore():
     global _vectorstore
     if _vectorstore is None:
-        print("Initializing Knowledge Base...")
         from langchain_community.vectorstores import FAISS
-        from langchain_community.document_loaders import PyPDFLoader
-        from langchain_text_splitters import RecursiveCharacterTextSplitter
         
-        pdf_path = "BHMRC Hospital Data.pdf"
-        if not os.path.exists(pdf_path):
-            print(f"Error: PDF file {pdf_path} not found.")
-            return None
+        # 1. Try to load existing index from disk (Much faster!)
+        if os.path.exists(INDEX_PATH):
+            print("Loading Knowledge Base from disk...")
+            _vectorstore = FAISS.load_local(INDEX_PATH, get_embedding_model(), allow_dangerous_deserialization=True)
+        else:
+            # 2. Build index from PDF if not found
+            print("Knowledge Base index not found. Building from PDF (This may take a moment)...")
+            from langchain_community.document_loaders import PyPDFLoader
+            from langchain_text_splitters import RecursiveCharacterTextSplitter
             
-        pdf_loader = PyPDFLoader(pdf_path)
-        hospital_data = pdf_loader.load()
-        
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-        hospital_chunks = text_splitter.split_documents(hospital_data)
-        
-        print(f"Loaded {len(hospital_chunks)} chunks from PDF")
-        _vectorstore = FAISS.from_documents(hospital_chunks, get_embedding_model())
+            pdf_path = "BHMRC Hospital Data.pdf"
+            if not os.path.exists(pdf_path):
+                print(f"Error: PDF file {pdf_path} not found.")
+                return None
+                
+            pdf_loader = PyPDFLoader(pdf_path)
+            hospital_data = pdf_loader.load()
+            
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=40)
+            hospital_chunks = text_splitter.split_documents(hospital_data)
+            
+            print(f"Loaded {len(hospital_chunks)} chunks from PDF. Creating index...")
+            _vectorstore = FAISS.from_documents(hospital_chunks, get_embedding_model())
+            
+            # Save to disk for next time
+            _vectorstore.save_local(INDEX_PATH)
+            print("Knowledge Base saved to disk ✅")
+            
+        gc.collect() # Free up RAM
     return _vectorstore
 
 small_talk = [
@@ -72,38 +87,15 @@ def ask_from_knowledge_base(query: str) -> str:
     if not docs:
         return "Sorry, I couldn’t find that in the hospital information."
     context = "\n".join([d.page_content for d in docs])
-    prompt_text = f"""
-You are an assistant for hospital information. 
-Answer ONLY using the following hospital data. 
-If the answer is not in the data, say: "Sorry, I couldn’t find that in the hospital information."
-
-Hospital Data:
-{context}
-
-Question: {query}
-
-Answer:
-"""
+    prompt_text = f"Use this data: {context}\nQuestion: {query}\nAnswer briefly:"
+    
     llm = get_llm()
     return str(llm.invoke(prompt_text)).strip().strip('"')
 
 def ask_question(query: str):
     q_lower = query.lower()
-    print(f"DEBUG: Processing Query: '{query}', Lower: '{q_lower}'")
-    
     is_small_talk = any(phrase in q_lower for phrase in small_talk)
-    print(f"DEBUG: Small Chat Detected: {is_small_talk}")
 
     if is_small_talk:
         return ask_llm_direct(query)
     return ask_from_knowledge_base(query)
-
-if __name__ == "__main__":
-    print("Assistant ready! (Note: models will load on first request)")
-    while True:
-        query = input("\nYou: ").strip()
-        if query.lower() in ["exit", "quit", "stop"]:
-            print("Assistant: Goodbye! 👋")
-            break
-        answer = ask_question(query)
-        print("Assistant:", answer)
