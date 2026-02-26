@@ -17,7 +17,7 @@ def get_llm():
         print("Loading LLM model...")
         device = 0 if torch.cuda.is_available() else -1
         _llm = HuggingFacePipeline.from_model_id(
-            model_id="google/flan-t5-base",
+            model_id="google/flan-t5-small",
             task="text2text-generation",
             device=device,
             pipeline_kwargs={"max_new_tokens": 150, "temperature": 0.0}
