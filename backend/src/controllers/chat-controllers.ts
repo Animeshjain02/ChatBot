@@ -50,6 +50,10 @@ export const generateChatCompletion = async (
       const response = await axios.post(pythonUrl, {
         question: message,  // matches FastAPI's Pydantic model
         lang: lang || "en"
+      }, {
+        headers: {
+          "ngrok-skip-browser-warning": "true"
+        }
       });
       console.log("[Node] Received response from Python:", response.data);
       botReply = response.data.answer;
